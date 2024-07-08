@@ -36,21 +36,32 @@ web框架 django 5.0.6
 # SunshineLife Personal Blog Site
 
 #### Initial intention
-As a 00 programmer, I always like to explore what I have not touched, and I want to record my technical sharing and feelings in my life, and I also want to complete the development process from design, coding to deployment of the entire web page from the point of view of an independent developer, and to really feel a handful of university textbooks in the software engineering!
+As a 00 programmer, I always like to explore what I have not touched, and I want to record my technical sharing and feelings in my life, and I also want to complete the development process from design, coding to deployment of the entire web page from the point of view 
+of an independent developer, and to really feel a handful of university textbooks in the software engineering!
 
 ####  Introducing
 SunshineLife personal blog is a small personal blog site based on django+sqlite+layui.
+
 The main purpose is to practice the results of their own python learning and django architecture, and then slowly want to try to online deployment to become their own use of the blog site.
+
 The process is
+
 Idea --> Design --> Learning --> Coding --> Domain name and cloud server purchase --> Deployment
+
 During the whole process, I encountered a lot of problems and troubles. 
+
 But the fun of programming is not from the discovery of problems to solve the problem of the process to get a sense of achievement! 
+
 
 ####  Architecture and Deployment System
 Database sqlite3
+
 web framework django 5.0.6
+
 Front-end layui 2.9.13
+
 Backend python 3.10.0
+
 Server Ubuntu 20.04.6
 
 
