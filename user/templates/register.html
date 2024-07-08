@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SunShine-Register</title>
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% static 'layui/layui.js' %}"></script>
+    <link rel="icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+</head>
+<body style="background-color: #8a9599;">
+<div class="layui-container"
+     style="display: grid;place-items: center; min-height: 100vh;">
+    <form class="layui-form" action="{% url 'user:user_register' %}" method="post">
+        {# csrf攻击凭证 #}
+        {% csrf_token %}
+        <div class="demo-reg-container">
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-release"></i>
+                    </div>
+                    <input type="text" name="code" id="code" value
+                           lay-verify="required|codeCheck"
+                           placeholder="注册码" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <input type="text" name="username" id="name" value
+                           lay-verify="required" placeholder="用户名"
+                           lay-reqtext="请填写用户名" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-email"></i>
+                    </div>
+                    <input type="email" name="email" id="userid" value
+                           lay-verify="required|email" placeholder="邮箱"
+                           lay-reqtext="请填写邮箱" autocomplete="off"
+                           class="layui-input" lay-affix="clear">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="password" id="password" value
+                           lay-verify="required|passwordCheck" placeholder="密码"
+                           autocomplete="off" class="layui-input"
+                           lay-affix="eye">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="confirmpassword"
+                           id="confirmpassword" value
+                           lay-verify="required|confirmPassword"
+                           placeholder="确认密码" autocomplete="off"
+                           class="layui-input" lay-affix="eye">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit
+                        lay-filter="demo-reg">注册
+                </button>
+            </div>
+        </div>
+    </form>
+    <script>
+        layui.use(function () {
+            var $ = layui.$;
+            var form = layui.form;
+            var layer = layui.layer;
+            var util = layui.util;
+            // 自定义验证规则
+            form.verify({
+                //检验密码
+                passwordCheck: function (value, item) {
+                    if (value.length < 6) {
+                        return '账号长度在6到12位之间';
+                    }
+                },
+                // 确认密码
+                confirmPassword: function (value, item) {
+                    var passwordValue = $('#password').val();
+                    if (value !== passwordValue) {
+                        return '两次密码输入不一致';
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

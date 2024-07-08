@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>类型详细</title>
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% static 'layui/layui.js' %}"></script>
+</head>
+<body>
+<table class="layui-hide" id="typetable"></table>
+<script type="text/html" id="toolbartypet">
+    <button class="layui-btn layui-btn-lg" lay-event="addType">新增公告</button>
+    <h4 style="float: right;color: red">主页默认显示id最大的一条</h4>
+</script>
+
+
+<div id="addtype" style="display: none;">
+<form class="layui-form layui-form-pane" action="{% url 'user:user_addside' %}" method="post" >
+    {% csrf_token %}
+    <div class="layui-form-item">
+        <label class="layui-form-label">公告</label>
+        <div class="layui-input-block">
+            <input type="text" name="message" autocomplete="off" value="" placeholder="输入新增公告"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" style="text-align: center">
+        <button class="layui-btn" lay-submit lay-filter="demo2">新增</button>
+    </div>
+</form>
+</div>
+<script>
+    layui.use(['table', 'jquery', 'layer'], function () {
+        let layer = layui.layer;
+        let table = layui.table;
+        let $ = layui.jquery;
+        // 已知数据渲染
+        table.render({
+            elem: '#typetable',
+            toolbar: '#toolbartypet',
+            url: '{% url 'user:user_allside' %}',
+            method: "get",
+            defaultToolbar: [],
+            response: {
+                statusCode: 200 //规定成功的状态码，默认：0
+            },
+            cols: [[ //标题栏
+                {field: 'id', title: 'ID', sort: true},
+                {field: 'message', title: '公告'},
+            ]],
+
+        })
+        ;
+        // 工具栏事件
+        table.on('toolbar(typetable)', function (obj) {
+            switch (obj.event) {
+                case 'addType':
+                    layer.open({
+                        type: 1,
+                        area: ['360px', '500px'],
+                        skin: 'layui-layer-rim', // 加上边框
+                        content:  $('#addtype'),
+                    });
+            }
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

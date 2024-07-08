@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SunShine-Login</title>
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% static 'layui/layui.js' %}"></script>
+     <link rel="icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+</head>
+<body style="background-color: #cccccc;">
+<div class="layui-container" style="display: grid;place-items: center; min-height: 100vh;">
+    <form class="layui-form" method="post" action="{% url 'user:user_login' %}">
+        <div class="demo-login-container">
+            <div class="layui-form-item " style="text-align: center;">
+                <h2 style="color: #16baaa;">心 平 能 愈 三 千 疾</h2>
+            </div>
+            {# csrf攻击凭证 #}
+            {% csrf_token %}
+            <br><br><br>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-email"></i>
+                    </div>
+                    <input type="email" name="email" value="{{ email }}" lay-verify="required|email" placeholder="邮  箱"
+                           lay-reqtext="请填写邮箱" autocomplete="off" class="layui-input" lay-affix="clear">
+                    <div class="layui-input-affix layui-input-suffix layui-hide"><i
+                            class="layui-icon layui-icon-clear"></i></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="password" value="" lay-verify="required" placeholder="密   码"
+                           lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                    <div class="layui-input-affix layui-input-suffix"><i
+                            class="layui-icon layui-icon-eye-invisible"></i></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="demo-login">登录</button>
+            </div>
+            <div class="layui-form-item demo-login-other">
+                <a class="layui-btn layui-btn-fluid" href="{% url 'user:user_register' %}">注册</a>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SunShine-Life</title>
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% static 'layui/layui.js' %}"></script>
+    {#    calendar#}
+    <link rel="icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'img/sunshine.svg' %}" type="image/x-icon">
+</head>
+
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-hide-xs layui-bg-black">layout demo</div>
+        <ul class="layui-nav layui-bg-gray"
+            style="text-align: center; background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%)!important; padding: 0 0 ">
+            <li class="layui-nav-item" style="float: left;"><img src="{% static 'img/logo-CN.png' %}"
+                                                                 width="200" height="50"></li>
+            <li class="layui-nav-item"><a class="alink" href="{% url 'essay:index' %}">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">分类</a>
+                <dl class="layui-nav-child">
+                    {% for item in typedb %}
+                        <dd><a href="{% url 'essay:index' %}?typeid={{ item.typeid }}">{{ item.type }}</a></dd>
+                    {% endfor %}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a id="timetree" style="cursor: pointer;">时间树</a></li>
+
+            <li class="layui-nav-item">
+                <div class="layui-form">
+                    <div class="layui-input-wrap">
+                        <input type="text" lay-affix="search" lay-filter="search"
+                               lay-options="{split: true}" placeholder="搜索文章"
+                               class="layui-input">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="layui-side layui-bg-black"
+         style="background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%)!important; text-align: center;height: 888px; overflow: hidden;color: #1f1f1f !important">
+        <br>
+        <img src="{% static 'img/sunshine.svg' %}" class="layui-nav-img" style="width: 150px;height:150px">
+        <br>
+        <br>
+        <div class="layui-panel"
+             style="background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%)!important; text-align: center;height: 200px">
+            {{ message|safe }}
+        </div>
+        <br>
+        <div class="parent" style="height: 440px">
+            <div><h2 style="float: left">近期</h2></div>
+            <br>
+            <div class="layui-text" style="padding-left:25px;">
+                <ul>
+                    {% for item in recent %}
+                        <li style="list-style-type:upper-roman;">
+                            <p class="read" id="essayClickParent{{ forloop.counter }}"
+                               essayid="{{ item.essayid }}">{{ item.title }}</p>
+                        </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+            <span style="color: #1f1f1f !important" class="child-at-bottom">
+                <a href="{% url 'user:user_login' %}" style="color: rgba(26,26,26,0.93) !important">登录</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                <a style="color: rgba(26,26,26,0.93) !important"> MORE</a>
+            </span>
+        </div>
+    </div>
+    <div class="layui-body parent" id="body" style="background-color:#ece0bc!important; height: auto">
+        <div class="flow-demo" id="ID-flow-demo" style="background-color:#ece0bc!important; height: auto">
+            <div class="layui-row layui-col-space15">
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer"
+         style="color: black;background-image: linear-gradient(to top, #accbee 20%, #e7f0fd 100%) !important; text-align: center">
+        底部固定区域
+    </div>
+</div>
+
+<script>
+    layui.use(function () {
+        var $ = layui.jquery
+        var flow = layui.flow;
+        // 流加载实例
+        flow.load({
+            elem: '#ID-flow-demo', // 流加载容器
+            md: 10,	//与底部的临界距离，默认50。即当滚动条与底部产生该距离时，触发加载
+            done: function (page, next) { // 执行下一页的回调
+                var lis = [];
+                // 模拟数据插入
+                $.ajax({
+                    type: "GET",
+                    dataType: 'json',  // 返回数据的数据类型json
+                    url: "{% url 'essay:essayajax' %}?page=" + page + "",
+                    {#data: {pagesize: pages},  //传送的数据#}
+                    success: function (res) {
+                        //  console.log(res.data) debug
+                        //   console.log(res.count) debug
+
+                        layui.each(res.data, function (index, item) {
+                            var html =
+                                '<div class="layui-panel  panel-color">' +
+                                '<div style="padding:0 8px ;">' +
+                                '<fieldset class="layui-elem-field">' +
+                                ' <legend style="font-size: 30px;color:#306B59">' + item.title + '</legend>' +
+                                '<div class="layui-field-box ">' +
+                                '<span style="font-size: 15px;"><strong><em> ' + item.typedata + ' -- ' + item.createtime + ' </em></strong></span>' +
+                                ' <hr class="layui-border-red">' +
+                                '<div style="width: 1660px;height: 80px;"class="selector">' +
+                                '<p class="text-overflow">' + item.content + '</p>' +
+                                '</div>' +
+                                '<br> <p id="essayClickBody' + item.essayid + '" essayid="' + item.essayid + '" class="read" > >>> 点击阅读</p>' +
+                                '</div> </fieldset> </div>   </div><br>';
+                            lis.push(html);
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //page为当前页   res.count为总页数     只有当前页小于 总页数时才执行
+                        // console.log( page  , res.count)  debug
+                        next(lis.join(''), page < res.count);
+                        //文章点击
+                        $('p[id^="essay"]').click(function () {
+                            essayid = $(this).attr("essayid") // 获取essay属性值
+                            $.ajax({
+                                type: "GET",
+                                dataType: 'json',
+                                url: "{% url 'essay:getessay' %}?essayid=" + essayid + "",
+                                success: function (res) {
+                                    resdata = res.data[0];
+                                    $('#body').empty()
+                                    var html =
+                                        '<div><span><h1 style="text-align: center"><b>' + resdata.title + '</b></h1></span><br>' +
+                                        ' <span><h3  style="text-align: center">' + resdata.createtime + '更新 |' + resdata.typedata + '</h3></span><br><div class="content">' +
+                                        resdata.content + '</div></div>'
+                                    $('#body').html(html)
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    //输入框点缀事件
+    layui.use(function () {
+        var form = layui.form;
+        // 输入框点缀事件 - 搜索示例
+        form.on('input-affix(search)', function (data) {
+            var elem = data.elem; // 输入框
+            var value = elem.value; // 输入框的值
+            //console.log(value)   debug
+            if (!value) {
+                layer.msg('请输入搜索内容');
+                return elem.focus()
+            }
+            ;
+            // 模拟搜索跳转
+            location.href = "{% url 'essay:essaysearch' %}?keywords=" + value;
+        });
+    });
+
+    //最近文章点击
+    layui.use(function () {
+        var $ = layui.jquery
+        $('p[id^="essay"]').click(function () {
+            essayid = $(this).attr("essayid") // 获取essay属性值
+            $.ajax({
+                type: "GET",
+                dataType: 'json',
+                url: "{% url 'essay:getessay' %}?essayid=" + essayid + "",
+                success: function (res) {
+                    resdata = res.data[0];
+                    $('#body').empty()
+                    var html =
+                        '<div><span><h1 style="text-align: center"><b>' + resdata.title + '</b></h1></span><br>' +
+                        ' <span><h3  style="text-align: center">' + resdata.createtime + '更新 |' + resdata.typedata + '</h3></span><br><div class="content">' +
+                        resdata.content + '</div></div>'
+                    $('#body').html(html)
+                }
+            });
+        });
+    });
+
+    //时间树点击
+    layui.use(function () {
+        var $ = layui.jquery
+        $('#timetree').click(function () {
+            $.ajax({
+                type: "GET",
+                dataType: 'json',
+                url: "{% url 'essay:timetree' %}",
+                success: function (res) {
+                    $('#body').empty()
+                    var html = '';
+                    for (var i = 0; i < res.data.length; i++) {
+                        // 为每个条目生成HTML片段
+                        html += '<div class="layui-timeline-item">';
+                        html += ' <i class="layui-icon layui-timeline-axis"></i>';
+                        html += ' <div class="layui-timeline-content layui-text">';
+                        html += ' <h3 class="layui-timeline-title">' + res.data[i].createtime + '</h3>';
+                        html += '<p>' + res.data[i].event + '</p>';
+                        html += ' </div></div>';
+                    }
+                    $('#body').html('<div class="layui-timeline content" style="display: grid;place-items: center;height: auto; ">' + html + '</div>')
+                }
+            });
+        });
+    });
+</script>
+<style>
+    html, body {
+        overflow-x: hidden; /* 隐藏水平滚动条 */
+    }
+
+    body {
+        font-family: sans-serif !important;
+
+    }
+
+    li a {
+        color: rgba(91, 91, 91, 0.93) !important
+    }
+
+    .alink {
+        color: #6f6e78 !important
+    }
+
+    .content {
+        padding: 0 55px 55px 55px;
+        background-color: #ece0bc !important;
+    }
+
+    .parent {
+        display: flex;
+        flex-direction: column; /* 默认就是column，这里可以省略，但为了明确表示垂直布局故保留 */
+        height: 100%; /* 父元素需要一个确定的高度 */
+    }
+
+    .child-at-bottom {
+        margin-top: auto; /* 这将把该子元素推到其他内容下方 */
+    }
+
+    .text-overflow {
+        overflow: hidden;
+        -webkit-line-clamp: 3;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+    }
+
+    .selector {
+        font-size: 20px !important; /* 设置字体大小为20像素 */
+        font-family: Arial, sans-serif !important; /* 设置字体类型，优先使用Arial，如果用户设备上没有Arial，则使用任何无衬线字体 */
+        color: rgba(107, 106, 106, 0.93) !important; /* 设置字体颜色为深灰色，#333 是十六进制颜色代码 */
+    }
+
+    .selector * {
+        font-size: inherit; /* 继承字体大小 */
+        font-family: inherit; /* 继承字体类型 */
+        color: inherit; /* 继承字体颜色 */
+    }
+
+    .panel-color {
+        background-color: #CDDCDC;
+        background-image: radial-gradient(at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(0, 0, 0, 0.25) 100%);
+        background-blend-mode: screen, overlay;
+    }
+
+    .read {
+        color: #306B59 !important
+    }
+
+    .read:hover {
+        color: #f35d5d !important;
+        cursor: pointer;
+    }
+
+    /* 定义滚动条的整体宽高 */
+    ::-webkit-scrollbar {
+        width: 10px; /* 对于垂直滚动条的宽度 */
+        height: 10px; /* 对于水平滚动条的高度 */
+    }
+
+    /* 定义滚动条的轨道 */
+    ::-webkit-scrollbar-track {
+        background-color: rgb(239, 218, 158); /* 轨道颜色 */
+        border-radius: 5px; /* 轨道圆角 */
+    }
+
+    /* 定义滚动条滑块 */
+    ::-webkit-scrollbar-thumb {
+        background-color: #5da7f8; /* 滑块颜色 */
+        border-radius: 10px; /* 滑块圆角 */
+    }
+
+    /* 当滑块悬停时改变颜色 */
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #de4646;
+    }
+
+
+</style>
+</body>
+
+</html>

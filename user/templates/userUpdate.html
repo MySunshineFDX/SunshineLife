@@ -1,0 +1,29 @@
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息编辑</title>
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% static 'layui/layui.js' %}"></script>
+</head>
+<body>
+<!-- 给容器追加 class="layui-form-pane"，即可显示为方框风格 -->
+<form class="layui-form layui-form-pane" action="{% url 'user:user_update' %}"  method="post">
+        {# csrf攻击凭证 #}
+        {% csrf_token %}
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户名</label>
+    <div class="layui-input-block">
+      <input type="text" name="username" autocomplete="off" value="{{ username }}" lay-verify="required" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">简介</label>
+    <div class="layui-input-block">
+      <textarea placeholder="{{ show }}" name="show"   class="layui-textarea"></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item" style="text-align: center">
+    <button class="layui-btn" lay-submit lay-filter="demo2">确认</button>
+    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+  </div>
+</form>
+</body>
