@@ -43,7 +43,7 @@ def register(request):
         return render(request, 'register.html')
     else:
         code = request.POST.get("code")
-        if code != 'XXX420159':
+        if code != 'SSSSS':
             return HttpResponse("注册码有误")
         else:
             form = RegisterForm(request.POST)
